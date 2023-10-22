@@ -2,13 +2,13 @@
 
 import React, { useEffect, useState } from "react";
 import { useConnect } from "@stacks/connect-react";
-import { StacksTestnet } from "@stacks/network";
+import { StacksTestnet, StacksDevnet } from "@stacks/network";
 import {
   AnchorMode,
   PostConditionMode,
   stringAsciiCV,
   uintCV,
-  principalCV
+  principalCV,
 } from "@stacks/transactions";
 import { userSession } from "./ConnectWallet";
 
@@ -20,19 +20,25 @@ const ContractCallVote = () => {
 
   function mint() {
     doContractCall({
-      network: new StacksTestnet(),
+      network: new StacksDevnet(),
       anchorMode: AnchorMode.Any,
-      contractAddress: "SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9",
+      contractAddress: "ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM",
       contractName: "non-fungible-token",
       functionName: "mint",
-      functionArgs: [principalCV("ST1SJ3DTE5DN7X54YDH5D64R3BCB6A2AG2ZQ8YPD5"),stringAsciiCV("Hackathon"),stringAsciiCV("EasyA"),uintCV(120)],
+      functionArgs: [
+        // TODO: read this from user session of the connected wallet user
+        principalCV("STZ5MHA69PWEB7ZK1RTGFE5YFETFX78ZF9JN1FV6"),
+        stringAsciiCV("Hackathon"),
+        stringAsciiCV("EasyA"),
+        uintCV(120),
+      ],
       postConditionMode: PostConditionMode.Deny,
       postConditions: [],
       onFinish: (data) => {
         console.log("onFinish:", data);
         window
           .open(
-            `https://explorer.hiro.so/txid/${data.txId}?chain=testnet`,
+            `http://localhost:8000/txid/${data.txId}?chain=testnet`,
             "_blank"
           )
           .focus();

@@ -1,0 +1,25 @@
+---
+id: 0
+name: Testnet deployment
+network: testnet
+stacks-node: "https://api.testnet.hiro.so"
+bitcoin-node: "http://blockstack:blockstacksystem@bitcoind.testnet.stacks.co:18332"
+plan:
+  batches:
+    - id: 0
+      transactions:
+        - contract-publish:
+            contract-name: nft-trait
+            expected-sender: STZ5MHA69PWEB7ZK1RTGFE5YFETFX78ZF9JN1FV6
+            cost: 1000000
+            path: contracts/nft-trait.clar
+            anchor-block-only: true
+            clarity-version: 2
+        - contract-publish:
+            contract-name: non-fungible-token
+            expected-sender: STZ5MHA69PWEB7ZK1RTGFE5YFETFX78ZF9JN1FV6
+            cost: 1000000
+            path: contracts/non-fungible-token.clar
+            anchor-block-only: true
+            clarity-version: 2
+      epoch: "2.4"

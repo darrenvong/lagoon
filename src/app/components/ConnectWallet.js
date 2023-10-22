@@ -1,36 +1,49 @@
-import { showConnect } from "@stacks/connect";
-import { StacksMocknet, StacksTestnet } from "@stacks/network";
+"use client";
 
-export default function ConnectWallet({ userSession, userData, setUserData }) {
-  const connectWallet = () => {
-    showConnect({
-      userSession,
-      network: StacksTestnet,
-      appDetails: {
-        name: "Lagoon",
-        icon: "https://freesvg.org/img/bitcoin.png",
-      },
-      onFinish: () => {
-        window.location.reload();
-      },
-      onCancel: () => {
-        // handle if user closed connection prompt
-      },
-    });
-  };
+import React, { useEffect, useState } from "react";
+import { AppConfig, showConnect, UserSession } from "@stacks/connect";
 
-  const disconnectWallet = () => {
-    userSession.signUserOut(window.location.origin);
-    setUserData({});
-  };
+const appConfig = new AppConfig(["store_write", "publish_data"]);
+
+export const userSession = new UserSession({ appConfig });
+
+function authenticate() {
+  showConnect({
+    appDetails: {
+      name: "Stacks Next.js Starter",
+      icon: window.location.origin + "/logo512.png",
+    },
+    redirectTo: "/",
+    onFinish: () => {
+      window.location.reload();
+    },
+    userSession,
+  });
+}
+
+function disconnect() {
+  userSession.signUserOut("/");
+}
+
+const ConnectWallet = () => {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
+  if (mounted && userSession.isUserSignedIn()) {
+    return (
+      <div className="Container">
+        <button className="Connect" onClick={disconnect}>
+          Disconnect Wallet
+        </button>
+      </div>
+    );
+  }
+
   return (
-    <button
-      className="px-4 py-2 font-bold text-white transition duration-500 ease-in-out rounded bg-gradient-to-r from-purple-500 to-pink-500 hover:from-pink-500 hover:to-orange-500"
-      onClick={() => {
-        userData.profile ? disconnectWallet() : connectWallet();
-      }}
-    >
-      {userData.profile ? "Disconnect" : "Connect Wallet"}
+    <button className="Connect" onClick={authenticate}>
+      Connect Wallet
     </button>
   );
-}
+};
+
+export default ConnectWallet;
